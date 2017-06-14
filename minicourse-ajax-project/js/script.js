@@ -13,8 +13,6 @@ function loadData() {
 
     // load streetview
 
-
-    // YOUR CODE GOES HERE!
     var streetStr = $('#street').val();
     var cityStr = $('#city').val();
     var address = streetStr + ', ' + cityStr;
@@ -26,8 +24,6 @@ function loadData() {
 
 
     // nytimes AJAX request goes here
-    
-    // YOUR CODE GOES HERE!
 
     var nytimesUrl = 'http://api.nytimes.com/svc/search/v2/articlesearch.json?q=' + cityStr + '&sort=newest&api-key=3bfc87ca82bb435fa1dd7b941c229aa6'
 
@@ -46,9 +42,25 @@ function loadData() {
         $nytHeaderElem.text('New York Times article could not be loaded');
     });
 
+    
+    // Wikipedia AJAX request goes here
+    var wikiUrl = 'http://en.wikipedia.org/w/api.php?action=opensearch&search=' + cityStr + '&format=json&callback=wikiCallback';
 
+    $.ajax({
+        url: wikiUrl,
+        dataType: "jsonp",
+        // jsonp: "callback",
+        success: function(response) {
+            var articleList = response[1];
 
+            for (var i = 0; i < articleList.length; i++) {
+                articleStr = articleList[i];
+                var url = 'http://en.wikipedia.org/wiki/' + articleStr;
+                $wikiElem.append('<li><a href="' + url + '">' + articleStr + '</a></li>');
+            };
+        }
+    });
     return false;
-};
+}
 
 $('#form-container').submit(loadData);
